@@ -1,2 +1,4 @@
+include ':commonlibrary'
+include ':audiolibrary'
 include ':app'
 rootProject.name = "SkysChange"
