@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<TextView>(R.id.tv_next).setOnClickListener { goNext() }
 
-        AudioPlayer.instance.startPlay()
+        //AudioPlayer.instance.startPlay()
     }
 
     private fun goNext() {
