@@ -10,19 +10,29 @@
 
     <ImageView
         android:id="@+id/audio_iv_cover"
-        android:layout_width="90dp"
-        android:layout_height="90dp"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:layout_marginStart="12dp"
         android:src="@drawable/audio_icon_logo_default"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/audio_iv_close"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="12dp"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/audio_tv_title"
+        app:layout_constraintTop_toTopOf="@id/audio_iv_cover" />
 
     <TextView
         android:id="@+id/audio_tv_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="3dp"
+        android:layout_marginTop="6dp"
         android:layout_marginEnd="12dp"
         android:ellipsize="marquee"
         android:focusable="true"
@@ -30,11 +40,28 @@
         android:singleLine="true"
         android:textColor="#333"
         android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/audio_iv_close"
         app:layout_constraintStart_toEndOf="@id/audio_iv_cover"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="这是音频的名称！！！这是音频的名称！！！这是音频的名称！！！" />
 
+    <TextView
+        android:id="@+id/audio_tv_singer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="12dp"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:includeFontPadding="false"
+        android:singleLine="true"
+        android:textColor="#666"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/audio_iv_cover"
+        app:layout_constraintTop_toBottomOf="@id/audio_tv_title"
+        tools:text="这是歌手名称！！！" />
 
     <ImageView
         android:id="@+id/audio_iv_previous"
@@ -43,7 +70,7 @@
         android:src="@android:drawable/ic_media_previous"
         app:layout_constraintBottom_toBottomOf="@id/audio_iv_play"
         app:layout_constraintEnd_toStartOf="@id/audio_iv_play"
-        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toEndOf="@id/audio_iv_cover"
         app:layout_constraintTop_toTopOf="@id/audio_iv_play" />
 
@@ -57,7 +84,7 @@
         app:layout_constraintBottom_toBottomOf="@id/audio_iv_cover"
         app:layout_constraintEnd_toStartOf="@id/audio_iv_next"
         app:layout_constraintStart_toEndOf="@id/audio_iv_previous"
-        app:layout_constraintTop_toTopOf="@id/audio_iv_cover" />
+        app:layout_constraintTop_toBottomOf="@id/audio_tv_singer" />
 
     <ImageView
         android:id="@+id/audio_iv_next"
@@ -70,41 +97,5 @@
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toEndOf="@id/audio_iv_play"
         app:layout_constraintTop_toTopOf="@id/audio_iv_play" />
-
-
-    <TextView
-        android:id="@+id/audio_tv_current"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="3dp"
-        android:includeFontPadding="false"
-        android:textColor="#666"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@id/audio_seek_bar"
-        app:layout_constraintStart_toStartOf="@id/audio_seek_bar"
-        tools:text="00:00" />
-
-    <TextView
-        android:id="@+id/audio_tv_all"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="3dp"
-        android:includeFontPadding="false"
-        android:textColor="#666"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@id/audio_seek_bar"
-        app:layout_constraintEnd_toEndOf="@id/audio_seek_bar"
-        tools:text="00:00" />
-
-    <SeekBar
-        android:id="@+id/audio_seek_bar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="12dp"
-        app:layout_constraintBottom_toBottomOf="@id/audio_iv_cover"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/audio_iv_cover"
-        tools:progress="25" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
