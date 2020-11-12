@@ -1,21 +1,17 @@
 package com.bpzzr.commonlibrary
 
-import android.Manifest
-import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
-import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.app.DialogCompat
 import androidx.core.content.ContextCompat
+import com.bpzzr.commonlibrary.util.LogUtil
 import java.util.*
 
 /**
@@ -73,17 +69,20 @@ class DynamicPermission(
             val permissions: Array<MutableList<String>> = getPermissions(*requestPermissions)
             LogUtil.e(mTag, "permissions:${permissions[0]},${permissions[1]}")
             when {
-
                 permissions[1].isNotEmpty() -> {
                     //被拒绝后不再提示的权限组,需要手动去设置页
                     val d = Dialog(activity);
                     d.setTitle("帮助")
+                    d.setContentView(R.layout.test_dialog)
                     d.show()
                 }
-                else -> {
+                permissions[0].isNotEmpty()->{
                     mActivityLauncher.launch(permissions[0].toTypedArray())
                 }
 
+                else -> {
+                    mActivityLauncher.launch(permissions[0].toTypedArray())
+                }
             }
         } else {
             listener?.onPermissionPass()
@@ -102,10 +101,10 @@ class DynamicPermission(
             if (checkSelfPermission == PackageManager.PERMISSION_DENIED) {
                 //没有的权限，将其加入权限集合
                 permissions.add(aPermission)
-            }
-            if (!activity.shouldShowRequestPermissionRationale(aPermission)) {
-                //用户同时点了拒绝，且不再提醒时的权限组
-                permissionsRa.add(aPermission)
+                if (!activity.shouldShowRequestPermissionRationale(aPermission)) {
+                    //用户同时点了拒绝，且不再提醒时的权限组
+                    permissionsRa.add(aPermission)
+                }
             }
         }
         return arrayOf(permissions, permissionsRa)

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -13,89 +13,82 @@
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_marginStart="12dp"
-        android:src="@drawable/audio_icon_logo_default"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:src="@drawable/audio_icon_logo_default" />
 
     <ImageView
         android:id="@+id/audio_iv_close"
         android:layout_width="30dp"
         android:layout_height="30dp"
+        android:layout_alignParentEnd="true"
         android:layout_marginEnd="12dp"
-        android:src="@android:drawable/ic_menu_close_clear_cancel"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/audio_tv_title"
-        app:layout_constraintTop_toTopOf="@id/audio_iv_cover" />
+        android:src="@android:drawable/ic_menu_close_clear_cancel" />
 
     <TextView
         android:id="@+id/audio_tv_title"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="6dp"
         android:layout_marginEnd="12dp"
+        android:layout_toStartOf="@id/audio_iv_close"
+        android:layout_toEndOf="@id/audio_iv_cover"
         android:ellipsize="marquee"
         android:focusable="true"
         android:includeFontPadding="false"
         android:singleLine="true"
         android:textColor="#333"
         android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@id/audio_iv_close"
-        app:layout_constraintStart_toEndOf="@id/audio_iv_cover"
-        app:layout_constraintTop_toTopOf="parent"
         tools:text="这是音频的名称！！！这是音频的名称！！！这是音频的名称！！！" />
 
     <TextView
         android:id="@+id/audio_tv_singer"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/audio_tv_title"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="12dp"
+        android:layout_toEndOf="@id/audio_iv_cover"
         android:ellipsize="marquee"
         android:focusable="true"
         android:includeFontPadding="false"
         android:singleLine="true"
         android:textColor="#666"
         android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/audio_iv_cover"
-        app:layout_constraintTop_toBottomOf="@id/audio_tv_title"
         tools:text="这是歌手名称！！！" />
 
-    <ImageView
-        android:id="@+id/audio_iv_previous"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:src="@android:drawable/ic_media_previous"
-        app:layout_constraintBottom_toBottomOf="@id/audio_iv_play"
-        app:layout_constraintEnd_toStartOf="@id/audio_iv_play"
-        app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintStart_toEndOf="@id/audio_iv_cover"
-        app:layout_constraintTop_toTopOf="@id/audio_iv_play" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/audio_tv_singer"
+        android:layout_alignBottom="@id/audio_iv_cover"
+        android:layout_toEndOf="@id/audio_iv_cover"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
-    <ImageView
-        android:id="@+id/audio_iv_play"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:src="@android:drawable/ic_media_play"
-        app:layout_constraintBottom_toBottomOf="@id/audio_iv_cover"
-        app:layout_constraintEnd_toStartOf="@id/audio_iv_next"
-        app:layout_constraintStart_toEndOf="@id/audio_iv_previous"
-        app:layout_constraintTop_toBottomOf="@id/audio_tv_singer" />
+        <ImageView
+            android:id="@+id/audio_iv_previous"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_weight="1"
+            android:src="@android:drawable/ic_media_previous" />
 
-    <ImageView
-        android:id="@+id/audio_iv_next"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:src="@android:drawable/ic_media_next"
-        app:layout_constrainedWidth="true"
-        app:layout_constraintBottom_toBottomOf="@id/audio_iv_play"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toEndOf="@id/audio_iv_play"
-        app:layout_constraintTop_toTopOf="@id/audio_iv_play" />
+        <ImageView
+            android:id="@+id/audio_iv_play"
+            android:layout_width="36dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:src="@android:drawable/ic_media_play" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:id="@+id/audio_iv_next"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_weight="1"
+            android:src="@android:drawable/ic_media_next" />
+    </LinearLayout>
+
+
+</RelativeLayout>

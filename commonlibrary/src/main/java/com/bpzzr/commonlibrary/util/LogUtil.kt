@@ -1,10 +1,11 @@
-package com.bpzzr.commonlibrary
+package com.bpzzr.commonlibrary.util
 
 import android.util.Log
+import com.bpzzr.commonlibrary.BuildConfig
 
 const val TAG = "LogUtil"
 
-class LogUtil {
+class LogUtil private constructor(){
 
     companion object {
         private val isShowLog = BuildConfig.DEBUG

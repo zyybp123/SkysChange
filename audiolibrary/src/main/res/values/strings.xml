@@ -1,1 +1,5 @@
-<resources></resources>
+<resources>
+    <string name="audio_channel_name">播放控制</string>
+    <string name="audio_channel_desc">用于显示和控制当前正在播放的音频</string>
+    <string name="audio_name_default">暂无正在播放的音乐</string>
+</resources>

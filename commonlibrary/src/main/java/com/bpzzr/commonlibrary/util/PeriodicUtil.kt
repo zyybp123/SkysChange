@@ -1,4 +1,4 @@
-package com.bpzzr.commonlibrary
+package com.bpzzr.commonlibrary.util
 
 import java.util.*
 

@@ -3,8 +3,8 @@ package com.bpzzr.audiolibrary.audio
 import android.content.Context
 import android.media.MediaPlayer
 import android.net.Uri
-import com.bpzzr.commonlibrary.LogUtil
-import com.bpzzr.commonlibrary.PeriodicUtil
+import com.bpzzr.commonlibrary.util.LogUtil
+import com.bpzzr.commonlibrary.util.PeriodicUtil
 
 /**
  * 音频管理类

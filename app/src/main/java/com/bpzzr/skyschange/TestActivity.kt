@@ -1,49 +1,67 @@
 package com.bpzzr.skyschange
 
 import android.Manifest
+import android.app.Dialog
+import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.LinearLayout
+import android.widget.RemoteViews
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import com.bpzzr.audiolibrary.AudioFields
 import com.bpzzr.audiolibrary.audio.AudioPlayer
 import com.bpzzr.audiolibrary.audio.PlayerViewHolder
+import com.bpzzr.commonlibrary.CommonDialog
 import com.bpzzr.commonlibrary.DynamicPermission
-import com.bpzzr.commonlibrary.LogUtil
+import com.bpzzr.commonlibrary.util.LogUtil
 
 class TestActivity : AppCompatActivity(), DynamicPermission.OnPermissionListener {
 
     private lateinit var playerViewHolder: PlayerViewHolder
     private val TAG = "TestActivity"
+    private val cameraPermissions = arrayOf(
+        Manifest.permission.CAMERA,
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test)
         findViewById<TextView>(R.id.tv_start).setOnClickListener {
             //AudioPlayer.instance.startPlay(this)
+
+            CommonDialog(activity = this)
+                .buildDefaultTipDialog(
+                     "测试弹窗",
+                     //"中间描述中间描述中间描述中间描述中间描述中间描述" +
+                     //"中间描述中间描述中间描述中间描述中间描述中间描述" +
+                     //"中间描述中间描述中间描述中间描述中间描述中间描述" +
+                     //"中间描述中间描述中间描述中间描述中间描述中间描述" +
+                     //"中间描述中间描述中间描述中间描述中间描述中间描述" +
+                     //"中间描述中间描述中间描述中间描述中间描述中间描述" +
+                     //"中间描述中间描述中间描述中间描述中间描述中间描述" +
+                     "中间描述中间描述中间描述中间描述中间描述中间描述" +
+                             "中间描述中间描述中间描述中间描述中间描述中间描述",
+                     "知道了"
+                ).show()
         }
 
-        /* NotificationUtil.createNotificationChannel(
-             this,
-             "播放控制",
-             "为了更好的为您服务，不漏掉重要的信息，请尽量开启此通知！",
-             "播放控制"
-         )
-         NotificationUtil.createNotificationChannel(
-             this,
-             "普通通知",
-             "为了更好的为您服务，不漏掉重要的信息，请尽量开启此通知！",
-             "普通通知"
-         )
-         NotificationUtil.createNotificationChannel(
-             this,
-             "消息推送",
-             "为了更好的为您服务，不漏掉重要的信息，请尽量开启此通知！",
-             "消息推送"
-         )*/
-        //NotificationUtil.createDefault(this, AudioFields.CHANNEL_ID)
-        //NotificationUtil.createProgress(this, TAG)
+        //AudioService.startAudioService(this)
+        // DynamicPermission(this, cameraPermissions, this)
 
+
+    }
+
+    fun CommonDialog.extend() {
+
+    }
+
+    fun test() {
         val ll = findViewById<LinearLayout>(R.id.ll_test_container)
 
         playerViewHolder = PlayerViewHolder(this)
@@ -91,12 +109,29 @@ class TestActivity : AppCompatActivity(), DynamicPermission.OnPermissionListener
 
         ll.addView(playerViewHolder.mView)
         //AudioPlayer.instance.startPlay()
-        val CAMERA_PERMISSIONS = arrayOf(
-            Manifest.permission.CAMERA,
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
+
+        createCustom(this)
+    }
+
+
+    private fun createCustom(context: Context) {
+        val notificationLayout = RemoteViews(
+            context.packageName,
+            R.layout.audio_lib_player_view_notification
         )
-        DynamicPermission(this, CAMERA_PERMISSIONS, this)
+        val audioControlNotification = NotificationCompat.Builder(
+            context, AudioFields.CHANNEL_ID
+        )
+            .setSmallIcon(android.R.drawable.ic_dialog_email)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setCustomBigContentView(notificationLayout)
+//            .setV
+            .build()
+        with(NotificationManagerCompat.from(context)) {
+            // notificationId is a unique int for each notification that you must define
+            notify(100, audioControlNotification)
+        }
     }
 
     override fun onPermissionPass() {

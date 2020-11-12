@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.Build
 import android.provider.MediaStore
 import android.text.TextUtils
-import com.bpzzr.commonlibrary.LogUtil
+import com.bpzzr.commonlibrary.util.LogUtil
 import java.util.ArrayList
 
 class FileScanner {

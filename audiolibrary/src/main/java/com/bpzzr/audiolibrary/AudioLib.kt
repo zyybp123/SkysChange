@@ -1,7 +1,7 @@
 package com.bpzzr.audiolibrary
 
 import android.content.Context
-import com.bpzzr.commonlibrary.NotificationUtil
+import com.bpzzr.commonlibrary.util.NotificationUtil
 
 class AudioLib {
     companion object {
@@ -14,8 +14,8 @@ class AudioLib {
 
         private fun createNotify() {
             NotificationUtil.createNotificationChannel(
-                context, AudioFields.CHANNEL_NAME,
-                AudioFields.CHANNEL_DESC, AudioFields.CHANNEL_ID
+                context, context.getString(R.string.audio_channel_name),
+                context.getString(R.string.audio_channel_desc), AudioFields.CHANNEL_ID
             )
         }
     }
