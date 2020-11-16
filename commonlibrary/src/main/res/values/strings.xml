@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="cb_sure">确定</string>
+    <string name="cb_permission_desc">权限说明</string>
+    <string name="cb_permission_info">开启权限，不错过精彩</string>
+    <string name="cb_permission_set">去设置</string>
+    <string name="cb_help">帮助</string>
+    <string name="cb_permission_i_knowed">我知道了</string>
+    <string name="cb_cancel">取消</string>
 </resources>

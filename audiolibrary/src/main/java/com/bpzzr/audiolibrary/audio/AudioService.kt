@@ -1,6 +1,7 @@
 package com.bpzzr.audiolibrary.audio
 
 import android.app.Activity
+import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
@@ -18,26 +19,14 @@ import com.bpzzr.audiolibrary.R
 import com.bpzzr.commonlibrary.util.LogUtil
 
 class AudioService : Service() {
-    private val TAG = "AudioService"
+    private val mTag = "AudioService"
 
     // 创建绑定
     private val binder = AudioBinder()
 
-    //加载通知视图
-    private val remoteViews = RemoteViews(
-        this.packageName,
-        R.layout.audio_lib_player_view_notification
-    )
+    private var remoteViews: RemoteViews? = null
+    private var audioControlNotification: Notification? = null
 
-    //创建通知
-    private val audioControlNotification = NotificationCompat.Builder(
-        this, AudioFields.CHANNEL_ID
-    )
-        .setSmallIcon(R.drawable.audio_icon_logo_note)
-        .setPriority(NotificationCompat.PRIORITY_HIGH)
-        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-        .setCustomBigContentView(remoteViews)
-        .build()
 
     val audioPlayer: AudioPlayer = AudioPlayer.instance
     var audioPlaying: Boolean = false
@@ -59,8 +48,20 @@ class AudioService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        LogUtil.e(TAG, "onCreate()")
-        remoteViews.setTextViewText(R.id.audio_tv_title, getString(R.string.audio_name_default))
+        LogUtil.e(mTag, "onCreate()")
+        remoteViews = RemoteViews(
+            this.packageName,
+            R.layout.audio_lib_player_view_notification
+        )
+        audioControlNotification = NotificationCompat.Builder(
+            this, AudioFields.CHANNEL_ID
+        )
+            .setSmallIcon(R.drawable.audio_icon_logo_note)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setCustomBigContentView(remoteViews)
+            .build()
+        remoteViews?.setTextViewText(R.id.audio_tv_title, getString(R.string.audio_name_default))
         // 启动前台服务所需要的通知
         startForeground(AudioFields.AUDIO_CONTROL_ID, audioControlNotification)
         audioPlayer.setListener(object : AudioPlayer.Companion.AudioListener {
@@ -70,7 +71,7 @@ class AudioService : Service() {
 
             override fun onPrepared(duration: Int?) {
                 audioPlaying = true
-                remoteViews.setImageViewResource(
+                remoteViews?.setImageViewResource(
                     R.id.audio_iv_play,
                     android.R.drawable.ic_media_pause
                 )
@@ -88,23 +89,35 @@ class AudioService : Service() {
         //初始化历史数据
 
         //设置封面点击跳转到音频详情页面
-        remoteViews.setOnClickPendingIntent(
+        remoteViews?.setOnClickPendingIntent(
             R.id.audio_iv_cover,
             PendingIntent.getActivity(this, 12, Intent(), PendingIntent.FLAG_UPDATE_CURRENT)
         )
         //设置播放按钮点击
-        //remoteViews.
+        remoteViews?.setOnClickResponse(
+            R.id.audio_iv_play,
+            object : RemoteViews.RemoteResponse() {
+                override fun addSharedElement(
+                    viewId: Int,
+                    sharedElementName: String
+                ): RemoteViews.RemoteResponse {
+                    LogUtil.e(mTag, "click response")
+
+                    return super.addSharedElement(viewId, sharedElementName)
+                }
+            }
+        )
         //设置上一首
         //设置下一首
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        LogUtil.e(TAG, "onStartCommand()")
+        LogUtil.e(mTag, "onStartCommand()")
         return super.onStartCommand(intent, flags, startId)
     }
 
     override fun onDestroy() {
-        LogUtil.e(TAG, "onDestroy()")
+        LogUtil.e(mTag, "onDestroy()")
         super.onDestroy()
     }
 

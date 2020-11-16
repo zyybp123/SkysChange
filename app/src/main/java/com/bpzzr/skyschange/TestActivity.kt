@@ -2,18 +2,17 @@ package com.bpzzr.skyschange
 
 import android.Manifest
 import android.app.Dialog
+import android.app.ProgressDialog.show
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
-import android.widget.LinearLayout
-import android.widget.RemoteViews
-import android.widget.SeekBar
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.bpzzr.audiolibrary.AudioFields
 import com.bpzzr.audiolibrary.audio.AudioPlayer
+import com.bpzzr.audiolibrary.audio.AudioService
 import com.bpzzr.audiolibrary.audio.PlayerViewHolder
 import com.bpzzr.commonlibrary.CommonDialog
 import com.bpzzr.commonlibrary.DynamicPermission
@@ -32,27 +31,36 @@ class TestActivity : AppCompatActivity(), DynamicPermission.OnPermissionListener
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test)
+        val d = CommonDialog(activity = this)
+
+        /*.buildDefaultTipDialog(
+            "测试弹窗",
+            "中间描述中间描述中间描述中间描述中间描述中间描述" +
+                    "中间描述中间描述中间描述中间描述中间描述中间描述",
+            "知道了"
+        ).addBottomAction("取消", object : CommonDialog.BottomAction {
+            override fun action(tvAction: TextView) {
+                tvAction.setTextColor(Color.RED)
+            }
+        })*/
         findViewById<TextView>(R.id.tv_start).setOnClickListener {
             //AudioPlayer.instance.startPlay(this)
-
-            CommonDialog(activity = this)
-                .buildDefaultTipDialog(
-                     "测试弹窗",
-                     //"中间描述中间描述中间描述中间描述中间描述中间描述" +
-                     //"中间描述中间描述中间描述中间描述中间描述中间描述" +
-                     //"中间描述中间描述中间描述中间描述中间描述中间描述" +
-                     //"中间描述中间描述中间描述中间描述中间描述中间描述" +
-                     //"中间描述中间描述中间描述中间描述中间描述中间描述" +
-                     //"中间描述中间描述中间描述中间描述中间描述中间描述" +
-                     //"中间描述中间描述中间描述中间描述中间描述中间描述" +
-                     "中间描述中间描述中间描述中间描述中间描述中间描述" +
-                             "中间描述中间描述中间描述中间描述中间描述中间描述",
-                     "知道了"
-                ).show()
+            d.buildEditDialog(
+                title = "测试弹窗",
+                hint = "请输入内容",
+                getter = object : CommonDialog.EditDialog() {
+                    override fun textGet(text: String) {
+                        Toast.makeText(
+                            applicationContext,
+                            "输入内容：$text", Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            ).show()
         }
 
-        //AudioService.startAudioService(this)
-        // DynamicPermission(this, cameraPermissions, this)
+        AudioService.startAudioService(this)
+        //DynamicPermission(this, cameraPermissions, this)
 
 
     }

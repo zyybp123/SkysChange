@@ -5,4 +5,8 @@
     <dimen name="dp_12">12dp</dimen>
     <dimen name="dp_200">200dp</dimen>
     <dimen name="dp_30">30dp</dimen>
+    <dimen name="dp_16">16dp</dimen>
+    <dimen name="dp0_5">0.5dp</dimen>
+    <dimen name="dp_44">44dp</dimen>
+    <dimen name="dp1">1dp</dimen>
 </resources>

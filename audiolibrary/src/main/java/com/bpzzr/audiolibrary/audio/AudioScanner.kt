@@ -1,6 +1,7 @@
 package com.bpzzr.audiolibrary.audio
 
 import android.content.Context
+import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.text.TextUtils
@@ -15,7 +16,7 @@ import java.util.ArrayList
 class AudioScanner {
     private val mTag = "AudioScanner"
     fun getAudioList(context: Context,
-                     selectionArg: Array<String?>?): ArrayList<BaseFileEntity> {
+                     selectionArg: Array<String?>?): ArrayList<AudioEntity> {
         //要查询的列
         val path =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
@@ -35,13 +36,9 @@ class AudioScanner {
         )
         //uri设置
         //Uri uri = MediaStore.Files.getContentUri(MediaStore.VOLUME_EXTERNAL);
-        var uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        //if (scanType == ScanType.SCAN_AUDIOS) {
+        //MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        var uri: Uri
         uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-        //}
-        //if (scanType == ScanType.SCAN_VIDEOS) {
-        //    uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-        //}
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             uri = MediaStore.Files.getContentUri(MediaStore.VOLUME_EXTERNAL)
         }
@@ -62,42 +59,32 @@ class AudioScanner {
             }
         }
         val selection = MediaStore.Files.FileColumns.MIME_TYPE + ") IN (" + selections.toString()
-        //游标
-        val fileList: ArrayList<BaseFileEntity> = ArrayList<BaseFileEntity>()
-        val resolver = context.contentResolver
-            ?: throw NullPointerException("resolver is null ! ")
-        val c = resolver.query(uri, columns, selection, null, order)
+        val audios: ArrayList<AudioEntity> = ArrayList<AudioEntity>()
+        val c = context.contentResolver.query(uri, columns, selection, null, order)
         while (c?.moveToNext()!!) {
             val fileId = c.getString(c.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID))
             val title = c.getString(c.getColumnIndexOrThrow(MediaStore.Files.FileColumns.TITLE))
+            val artiest = c.getString(c.getColumnIndexOrThrow(MediaStore.MediaColumns.ARTIST))
             val type = c.getString(c.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MIME_TYPE))
-            val displayName =
-                c.getString(c.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DISPLAY_NAME))
-            if (TextUtils.isEmpty(displayName)) {
-                continue
-            }
+
             val localPath = c.getString(c.getColumnIndexOrThrow(path))
             val dateModify =
                 c.getLong(c.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_MODIFIED))
             val size = c.getLong(c.getColumnIndexOrThrow(MediaStore.Files.FileColumns.SIZE))
-            LogUtil.e(mTag, "displayName: $displayName, title:$title, type:$type")
-            val file = BaseFileEntity(
-                fileId = fileId,
-                name = title,
-                nameSuffix = displayName,
-                type = type,
+
+            val audioEntity = AudioEntity(
+                audioName = title,
+                isLocal = true,
+                audioUri = uri,
+                artiest = artiest,
                 dateModify = dateModify,
-                size = size
+
             )
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                file.relativePath = localPath
-            } else {
-                file.data = localPath
-            }
-            fileList.add(file)
+
+            audios.add(audioEntity)
         }
         c.close()
-        return fileList
+        return audios
     }
 
 
