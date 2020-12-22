@@ -97,6 +97,15 @@ class CommonDialog(
         return this
     }
 
+    /**
+     * 构建状态提示弹窗
+     *
+     */
+    fun buildStateTipDialog(): CommonDialog {
+        View.inflate(activity,R.layout.cb_base_dailog_state,null)
+        return this
+    }
+
     private fun clearViews() {
         flHeader.removeAllViews()
         flContent.removeAllViews()

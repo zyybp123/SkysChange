@@ -1,12 +1,12 @@
 package com.bpzzr.skyschange
 
 import android.Manifest
-import android.app.Dialog
-import android.app.ProgressDialog.show
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
-import android.widget.*
+import android.widget.LinearLayout
+import android.widget.RemoteViews
+import android.widget.SeekBar
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -17,6 +17,14 @@ import com.bpzzr.audiolibrary.audio.PlayerViewHolder
 import com.bpzzr.commonlibrary.CommonDialog
 import com.bpzzr.commonlibrary.DynamicPermission
 import com.bpzzr.commonlibrary.util.LogUtil
+import com.bpzzr.commonlibrary.widget.StateLayout
+import com.bpzzr.skyschange.databinding.ActivityTestBinding
+import io.rong.imkit.RongIM
+import io.rong.imlib.model.Conversation
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class TestActivity : AppCompatActivity(), DynamicPermission.OnPermissionListener {
 
@@ -28,9 +36,14 @@ class TestActivity : AppCompatActivity(), DynamicPermission.OnPermissionListener
         Manifest.permission.WRITE_EXTERNAL_STORAGE
     )
 
+    private lateinit var binding: ActivityTestBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_test)
+        //setContentView(R.layout.activity_test)
+        binding = ActivityTestBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
         val d = CommonDialog(activity = this)
 
         /*.buildDefaultTipDialog(
@@ -43,25 +56,49 @@ class TestActivity : AppCompatActivity(), DynamicPermission.OnPermissionListener
                 tvAction.setTextColor(Color.RED)
             }
         })*/
-        findViewById<TextView>(R.id.tv_start).setOnClickListener {
+        binding.tvStart.setOnClickListener {
             //AudioPlayer.instance.startPlay(this)
-            d.buildEditDialog(
-                title = "测试弹窗",
-                hint = "请输入内容",
-                getter = object : CommonDialog.EditDialog() {
-                    override fun textGet(text: String) {
-                        Toast.makeText(
-                            applicationContext,
-                            "输入内容：$text", Toast.LENGTH_LONG
-                        ).show()
-                    }
-                }
-            ).show()
+            /* d.buildEditDialog(
+                 title = "测试弹窗",
+                 hint = "请输入内容",
+                 getter = object : CommonDialog.EditDialog() {
+                     override fun textGet(text: String) {
+                         Toast.makeText(
+                             applicationContext,
+                             "输入内容：$text", Toast.LENGTH_LONG
+                         ).show()
+                     }
+                 }
+             ).show()*/
+            //val supportedConversation: MutableMap<String, Boolean> = HashMap()
+            //supportedConversation[Conversation.ConversationType.PRIVATE.getName()] = false
+            RongIM.getInstance().startConversationList(
+                this@TestActivity,
+            )
+            //TestFragmentActivity.start(this@TestActivity)
         }
 
-        AudioService.startAudioService(this)
+        //AudioService.startAudioService(this)
         //DynamicPermission(this, cameraPermissions, this)
+        //val s: StateLayout = findViewById(R.id.state_layout)
+        binding.stateLayout.config = StateLayout.Config(
+            context = this,
+            //failImage = R.drawable.audio_icon_logo_default
+        )
+        //s.showEmpty(stateString = "暂无相关数据，点击重试")
+        binding.stateLayout.showLoading()
+        binding.stateLayout.addSuccessView(PlayerViewHolder(this@TestActivity).mView)
 
+        //lifecycleScope
+
+        // 在后台启动一个新的协程并继续// 非阻塞的等待 1 秒钟（默认时间单位是毫秒）
+        GlobalScope.launch(Dispatchers.Main) {
+
+            delay(1000L)
+            binding.stateLayout.showSuccess()
+            delay(1000L)
+            binding.stateLayout.showFail()
+        }
 
     }
 

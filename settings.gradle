@@ -1,3 +1,4 @@
+include ':managerlib'
 include ':commonlibrary'
 include ':audiolibrary'
 include ':app'

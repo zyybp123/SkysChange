@@ -7,4 +7,7 @@
     <string name="cb_help">帮助</string>
     <string name="cb_permission_i_knowed">我知道了</string>
     <string name="cb_cancel">取消</string>
+    <string name="cb_load_fail">数据加载失败，点击文字重试</string>
+    <string name="cb_loading">数据加载中，请稍候</string>
+    <string name="cb_load_empty">暂无相关数据</string>
 </resources>

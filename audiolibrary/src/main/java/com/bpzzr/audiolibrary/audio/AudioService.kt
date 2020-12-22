@@ -94,7 +94,7 @@ class AudioService : Service() {
             PendingIntent.getActivity(this, 12, Intent(), PendingIntent.FLAG_UPDATE_CURRENT)
         )
         //设置播放按钮点击
-        remoteViews?.setOnClickResponse(
+        /*remoteViews?.setOnClickResponse(
             R.id.audio_iv_play,
             object : RemoteViews.RemoteResponse() {
                 override fun addSharedElement(
@@ -106,7 +106,7 @@ class AudioService : Service() {
                     return super.addSharedElement(viewId, sharedElementName)
                 }
             }
-        )
+        )*/
         //设置上一首
         //设置下一首
     }

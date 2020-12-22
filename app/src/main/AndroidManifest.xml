@@ -4,6 +4,7 @@
     package="com.bpzzr.skyschange">
 
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".SkyChange"
         android:allowBackup="true"
@@ -14,6 +15,9 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup,UnusedAttribute">
+        <activity
+            android:name=".TestFragmentActivity"
+            android:configChanges="screenLayout|screenSize|smallestScreenSize|orientation" />
         <activity
             android:name=".TestActivity"
             android:configChanges="screenLayout|screenSize|smallestScreenSize|orientation" />
