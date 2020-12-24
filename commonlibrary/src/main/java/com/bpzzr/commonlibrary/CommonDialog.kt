@@ -102,7 +102,7 @@ class CommonDialog(
      *
      */
     fun buildStateTipDialog(): CommonDialog {
-        View.inflate(activity,R.layout.cb_base_dailog_state,null)
+        View.inflate(activity, R.layout.cb_base_dailog_state, null)
         return this
     }
 
@@ -201,7 +201,7 @@ class CommonDialog(
      */
     fun addBottomAction(actionName: String = "", action: BottomAction? = null): CommonDialog {
         val tvAction = addBottomAction(actionName)
-        action?.action(tvAction)
+        action?.action(tvAction,this)
         return this
     }
 
@@ -296,7 +296,7 @@ class CommonDialog(
     }
 
     interface BottomAction {
-        fun action(tvAction: TextView)
+        fun action(tvAction: TextView, dialog: CommonDialog?)
     }
 
     abstract class EditDialog {

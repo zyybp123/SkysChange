@@ -21,7 +21,7 @@ class SkyChange : Application() {
 
         AudioLib.init(this)
 
-        ManagerLib.init(this)
+        //ManagerLib.init(this)
 
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityPreCreated(activity: Activity, savedInstanceState: Bundle?) {

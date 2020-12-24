@@ -3,21 +3,21 @@ package com.bpzzr.skyschange
 import android.Manifest
 import android.content.Context
 import android.os.Bundle
+import android.view.View
 import android.widget.LinearLayout
 import android.widget.RemoteViews
 import android.widget.SeekBar
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.bpzzr.audiolibrary.AudioFields
 import com.bpzzr.audiolibrary.audio.AudioPlayer
-import com.bpzzr.audiolibrary.audio.AudioService
 import com.bpzzr.audiolibrary.audio.PlayerViewHolder
 import com.bpzzr.commonlibrary.CommonDialog
 import com.bpzzr.commonlibrary.DynamicPermission
 import com.bpzzr.commonlibrary.util.LogUtil
 import com.bpzzr.commonlibrary.widget.StateLayout
+import com.bpzzr.serverlibrary.ServerCore
 import com.bpzzr.skyschange.databinding.ActivityTestBinding
 import io.rong.imkit.RongIM
 import io.rong.imlib.model.Conversation
@@ -25,6 +25,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.java_websocket.WebSocket
 
 class TestActivity : AppCompatActivity(), DynamicPermission.OnPermissionListener {
 
@@ -37,6 +38,7 @@ class TestActivity : AppCompatActivity(), DynamicPermission.OnPermissionListener
     )
 
     private lateinit var binding: ActivityTestBinding
+    private lateinit var socket: WebSocket
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,39 +46,29 @@ class TestActivity : AppCompatActivity(), DynamicPermission.OnPermissionListener
         binding = ActivityTestBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        val d = CommonDialog(activity = this)
 
-        /*.buildDefaultTipDialog(
-            "测试弹窗",
-            "中间描述中间描述中间描述中间描述中间描述中间描述" +
-                    "中间描述中间描述中间描述中间描述中间描述中间描述",
-            "知道了"
-        ).addBottomAction("取消", object : CommonDialog.BottomAction {
-            override fun action(tvAction: TextView) {
-                tvAction.setTextColor(Color.RED)
-            }
-        })*/
         binding.tvStart.setOnClickListener {
-            //AudioPlayer.instance.startPlay(this)
-            /* d.buildEditDialog(
-                 title = "测试弹窗",
-                 hint = "请输入内容",
-                 getter = object : CommonDialog.EditDialog() {
-                     override fun textGet(text: String) {
-                         Toast.makeText(
-                             applicationContext,
-                             "输入内容：$text", Toast.LENGTH_LONG
-                         ).show()
-                     }
-                 }
-             ).show()*/
-            //val supportedConversation: MutableMap<String, Boolean> = HashMap()
-            //supportedConversation[Conversation.ConversationType.PRIVATE.getName()] = false
-            RongIM.getInstance().startConversationList(
-                this@TestActivity,
-            )
-            //TestFragmentActivity.start(this@TestActivity)
+            ServerCore().launchServer(object :ServerCore.Listener{
+                override fun onConnected(webSocket: WebSocket) {
+                    socket = webSocket
+                }
+            })
+            //ServerManager().Start(8080)
         }
+
+        binding.stateLayout.visibility = View.INVISIBLE
+
+        binding.tvTest.setOnClickListener {
+            //WebTool.instance?.webSocketRequest("ws://192.168.1.33:8080")
+            socket.send("space_command")
+        }
+    }
+
+    fun CommonDialog.extend() {
+
+    }
+
+    fun test() {
 
         //AudioService.startAudioService(this)
         //DynamicPermission(this, cameraPermissions, this)
@@ -93,20 +85,43 @@ class TestActivity : AppCompatActivity(), DynamicPermission.OnPermissionListener
 
         // 在后台启动一个新的协程并继续// 非阻塞的等待 1 秒钟（默认时间单位是毫秒）
         GlobalScope.launch(Dispatchers.Main) {
-
             delay(1000L)
             binding.stateLayout.showSuccess()
             delay(1000L)
             binding.stateLayout.showFail()
         }
 
-    }
+        val d = CommonDialog(activity = this)
 
-    fun CommonDialog.extend() {
-
-    }
-
-    fun test() {
+        /*.buildDefaultTipDialog(
+            "测试弹窗",
+            "中间描述中间描述中间描述中间描述中间描述中间描述" +
+                    "中间描述中间描述中间描述中间描述中间描述中间描述",
+            "知道了"
+        ).addBottomAction("取消", object : CommonDialog.BottomAction {
+            override fun action(tvAction: TextView) {
+                tvAction.setTextColor(Color.RED)
+            }
+        })*/
+        //AudioPlayer.instance.startPlay(this)
+        /* d.buildEditDialog(
+             title = "测试弹窗",
+             hint = "请输入内容",
+             getter = object : CommonDialog.EditDialog() {
+                 override fun textGet(text: String) {
+                     Toast.makeText(
+                         applicationContext,
+                         "输入内容：$text", Toast.LENGTH_LONG
+                     ).show()
+                 }
+             }
+         ).show()*/
+        //val supportedConversation: MutableMap<String, Boolean> = HashMap()
+        //supportedConversation[Conversation.ConversationType.PRIVATE.getName()] = false
+        /*RongIM.getInstance().startConversationList(
+            this@TestActivity,
+        )*/
+        //TestFragmentActivity.start(this@TestActivity)
         val ll = findViewById<LinearLayout>(R.id.ll_test_container)
 
         playerViewHolder = PlayerViewHolder(this)

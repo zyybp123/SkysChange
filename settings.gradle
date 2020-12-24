@@ -1,3 +1,5 @@
+include ':webcontrol'
+include ':serverlibrary'
 include ':managerlib'
 include ':commonlibrary'
 include ':audiolibrary'
