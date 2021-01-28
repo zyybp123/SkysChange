@@ -80,4 +80,12 @@
         app:layout_constraintTop_toBottomOf="@id/tv_title"
         tools:text="05:00" />
 
+    <Button
+        android:id="@+id/btn_test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dp_12"
+        android:text="测试"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_status" />
 </androidx.constraintlayout.widget.ConstraintLayout>

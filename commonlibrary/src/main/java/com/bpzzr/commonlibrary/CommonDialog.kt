@@ -2,17 +2,17 @@ package com.bpzzr.commonlibrary
 
 import android.app.Activity
 import android.app.Dialog
+import android.graphics.Color
+import android.graphics.Point
 import android.text.method.ScrollingMovementMethod
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.view.inputmethod.EditorInfo
-import android.widget.EditText
-import android.widget.FrameLayout
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import android.widget.TextView.OnEditorActionListener
+import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
@@ -41,6 +41,7 @@ class CommonDialog(
     private var dialog: Dialog? = null
     private val mTag = "CommonDialog"
     private var mEditText: EditText? = null
+    private var mStateWidth: Int
 
     init {
         if (sePadding == null) {
@@ -56,6 +57,7 @@ class CommonDialog(
         //默认底部从右开始布局
         llBottom.gravity = Gravity.END or Gravity.CENTER_VERTICAL
         (activity as AppCompatActivity).lifecycle.addObserver(this)
+        mStateWidth = DimensionUtil.getPxSize(activity, R.dimen.dp_100)
     }
 
     /**
@@ -99,10 +101,44 @@ class CommonDialog(
 
     /**
      * 构建状态提示弹窗
-     *
+     * 上面图标/或progress
+     * 下面是提示文字
      */
-    fun buildStateTipDialog(): CommonDialog {
-        View.inflate(activity, R.layout.cb_base_dailog_state, null)
+    fun buildStateTipDialog(
+        stateWord: String = "",
+        @DrawableRes stateRes: Int = 0,
+        point: Point? = Point(mStateWidth, mStateWidth),
+        isLoading: Boolean = false,
+        getter: StateDialog? = null
+    ): CommonDialog {
+        clearViews()
+        val stateView = View.inflate(activity, R.layout.cb_base_dailog_state, null)
+        val tvState = stateView.findViewById<TextView>(R.id.cb_tv_state)
+        val ivState = stateView.findViewById<ImageView>(R.id.cb_iv_state)
+        val pbLoading = stateView.findViewById<ProgressBar>(R.id.cb_pb_loading)
+        tvState.text = stateWord
+        if (stateRes != 0) {
+            ivState.setImageResource(stateRes)
+        }
+        val lp = FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+        )
+        lp.width = point!!.x
+        lp.height = point.y
+
+        lp.gravity = Gravity.CENTER
+        flContent.addView(
+            stateView, lp
+        )
+        pbLoading.visibility = if (isLoading) View.VISIBLE else View.GONE
+        ivState.visibility = if (isLoading) View.GONE else View.VISIBLE
+
+        rootView.setBackgroundColor(Color.TRANSPARENT)
+        constructDialog(0F)
+        dialog?.setCanceledOnTouchOutside(false)
+        dialog?.setCancelable(false)
+        getter?.elementGet(tvState, ivState, pbLoading, dialog)
         return this
     }
 
@@ -201,7 +237,7 @@ class CommonDialog(
      */
     fun addBottomAction(actionName: String = "", action: BottomAction? = null): CommonDialog {
         val tvAction = addBottomAction(actionName)
-        action?.action(tvAction,this)
+        action?.action(tvAction, this)
         return this
     }
 
@@ -251,7 +287,7 @@ class CommonDialog(
         }
     }
 
-    private fun constructDialog(): Dialog? {
+    private fun constructDialog(dimAmount: Float = 0.5F): Dialog? {
         if (dialog == null) {
             dialog = Dialog(activity, R.style.CommonDialog)
         }
@@ -269,7 +305,8 @@ class CommonDialog(
         params?.gravity = Gravity.CENTER
         params?.width = DimensionUtil.totalSize(activity).x - widthMargin * 2
         window?.attributes = params
-
+        window?.setBackgroundDrawableResource(android.R.color.transparent)
+        window?.setDimAmount(dimAmount)
         dialog?.setCancelable(canCancel)
         dialog?.setCanceledOnTouchOutside(canCancelOut)
         return dialog
@@ -307,5 +344,12 @@ class CommonDialog(
         }
 
         abstract fun textGet(text: String)
+    }
+
+    abstract class StateDialog {
+        fun elementGet(
+            tvState: TextView, ivState: ImageView, pbLoading: ProgressBar, dialog: Dialog?
+        ) {
+        }
     }
 }

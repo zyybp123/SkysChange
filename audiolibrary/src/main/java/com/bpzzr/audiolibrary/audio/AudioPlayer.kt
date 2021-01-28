@@ -51,7 +51,7 @@ class AudioPlayer private constructor() {
         override fun onError(mediaPlayer: MediaPlayer?, what: Int, extra: Int): Boolean {
             LogUtil.e(mTag, "OnError($mediaPlayer,what=$what,extra=$extra)")
             //b播放中出错，应该抛出
-            mAudioListener?.onError()
+            mAudioListener?.onError(mediaPlayer, what, extra)
             return true
         }
 
@@ -84,7 +84,7 @@ class AudioPlayer private constructor() {
         interface AudioListener {
             fun onStart()
             fun onPrepared(duration: Int?)
-            fun onError()
+            fun onError(mediaPlayer: MediaPlayer?, what: Int, extra: Int)
             fun onProgress(position: Int)
         }
 
@@ -108,14 +108,14 @@ class AudioPlayer private constructor() {
         mediaPlayer.pause()
     }
 
-    fun startPlay(context: Context) {
+    fun startPlay(context: Context, url: String) {
         mState = State.STATE_PREPARING
         mAudioListener?.onStart()
         mediaPlayer.reset()
         //设置播放资源
         mediaPlayer.setDataSource(
             context,
-            Uri.parse("https://img.tukuppt.com/newpreview_music/09/00/94/5c89ac4ce85cb74039.mp3"),
+            Uri.parse(url),
             HashMap<String, String>()
         )
         //播放器异步准备

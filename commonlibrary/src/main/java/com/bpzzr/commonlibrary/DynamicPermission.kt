@@ -104,9 +104,9 @@ class DynamicPermission(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             //检查所有权限
             val permissions: MutableList<String> = getPermissions(*requestPermissions)
-            LogUtil.e(mTag, "permissions:${permissions[0]},${permissions[1]}")
+            //LogUtil.e(mTag, "permissions:${permissions[0]},${permissions[1]}")
             //所需权限全部通过
-            if (permissions[0].isEmpty()) {
+            if (permissions.isEmpty()) {
                 listener?.onPermissionPass()
                 return
             }

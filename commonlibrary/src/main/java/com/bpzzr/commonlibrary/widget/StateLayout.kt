@@ -13,9 +13,8 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
 import com.bpzzr.commonlibrary.R
 import com.bpzzr.commonlibrary.util.LogUtil
+import java.lang.Exception
 import java.util.*
-import java.util.jar.Attributes
-import kotlin.collections.HashMap
 
 /**
  * 状态管理层
@@ -23,7 +22,7 @@ import kotlin.collections.HashMap
 class StateLayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
     FrameLayout(context, attrs, defStyleAttr) {
     private val mTag = "StateLayout"
-    val viewsMap: MutableMap<State, View> = EnumMap(State::class.java)
+    private val viewsMap: MutableMap<State, View> = EnumMap(State::class.java)
     var currentState: State = State.LOADING
 
     private val defaultViewHolder: DefaultViewHolder
@@ -36,6 +35,10 @@ class StateLayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
 
     init {
         defaultViewHolder = DefaultViewHolder(context)
+        val parent = defaultViewHolder.rootView.parent
+        if (parent is ViewGroup) {
+            parent.removeAllViews()
+        }
         addView(defaultViewHolder.rootView)
     }
 
@@ -53,19 +56,27 @@ class StateLayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
 
 
     fun addSuccessView(view: View) {
-        val parent = view.parent
-        if (parent is ViewGroup) {
-            parent.removeAllViews()
+        try {
+            val parent = view.parent
+            if (parent is ViewGroup) {
+                parent.removeAllViews()
+            }
+            view.visibility = GONE
+            viewsMap[State.SUCCESS] = view
+            addView(view)
+        } catch (e: Exception) {
+            LogUtil.e(mTag, "addSuccessView Exception: $e, view: $view")
         }
-        view.visibility = GONE
-        viewsMap[State.SUCCESS] = view
-        addView(view)
     }
 
     fun addSuccessView(@LayoutRes viewLayoutId: Int) {
-        val view = inflate(context, viewLayoutId, null)
-        viewsMap[State.SUCCESS] = view
-        addView(view)
+        try {
+            val view = inflate(context, viewLayoutId, null)
+            viewsMap[State.SUCCESS] = view
+            addView(view)
+        } catch (e: Exception) {
+            LogUtil.e(mTag, "addSuccessView Exception: $e, id: $viewLayoutId")
+        }
     }
 
     fun getSuccessView(): View? {
@@ -115,6 +126,7 @@ class StateLayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
     }
 
     class DefaultViewHolder(val context: Context) {
+
         var rootView: View = View.inflate(context, R.layout.cb_state_layout, null)
 
         private var ivState: ImageView

@@ -12,5 +12,6 @@ data class AudioEntity(
     var artiest: String? = null,
     var currentProgress: Int = 0,
     var duration: Int = 0,
-    var dateModify: Long=0,
+    var dateModify: Long = 0,
+    var test: AudioControlEntity? = null
 )

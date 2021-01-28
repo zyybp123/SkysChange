@@ -35,8 +35,8 @@ class PlayerViewHolder {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             // Called when the connection with the service is established
             LogUtil.e(mTag, "onServiceDisconnected")
-            val binder = service as AudioService.AudioBinder
-            mService = binder.getService()
+            //val binder = service as AudioService.AudioBinder
+            //mService = binder.getService()
             mBound = true
 
         }

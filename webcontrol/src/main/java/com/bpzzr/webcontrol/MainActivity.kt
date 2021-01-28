@@ -4,9 +4,11 @@ import android.app.Dialog
 import android.net.LinkProperties
 import android.net.Network
 import android.net.NetworkCapabilities
+import android.net.Uri
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import com.bpzzr.commonlibrary.CommonDialog
 import com.bpzzr.commonlibrary.util.LogUtil
 import com.bpzzr.commonlibrary.util.NetWorkUtil
@@ -18,6 +20,7 @@ import kotlinx.coroutines.launch
 import org.java_websocket.WebSocket
 import org.java_websocket.handshake.ClientHandshake
 import org.java_websocket.server.WebSocketServer
+import java.io.File
 import java.lang.Exception
 import java.net.InetSocketAddress
 
@@ -44,6 +47,9 @@ class MainActivity : AppCompatActivity() {
             socket?.send(SPACE_COMMAND)
         }
 
+        binding.btnTest.setOnClickListener {
+            fileProviderShare()
+        }
     }
 
     private fun launchServer(): WebSocketServer {
@@ -135,5 +141,42 @@ class MainActivity : AppCompatActivity() {
                 })
             d.show()
         }
+    }
+
+
+    private fun fileProviderShare(): String? {
+        val imagePath = this.getExternalFilesDir(null)
+        val file = File(imagePath, "Test/aa.jpg")
+
+        if (!file.parentFile?.exists()!!) {
+            file.parentFile?.mkdirs()
+        }
+
+        //更具获取Url
+        val contentUri: Uri =
+            FileProvider.getUriForFile(
+                this,
+                "$packageName.FileProvider", file
+            )
+        val fileOutputStream = contentResolver.openOutputStream(contentUri) ?: return null
+        val inputStream = this.assets.open("friends.jpg")
+        val byteArray = ByteArray(1024)
+        try {
+            fileOutputStream.use { outputStream ->
+                inputStream.use { inputStream ->
+                    while (true) {
+                        val readLen = inputStream.read(byteArray)
+                        if (readLen == -1) {
+                            break
+                        }
+                        outputStream.write(byteArray, 0, readLen)
+                    }
+                }
+            }
+        } catch (e: Throwable) {
+            LogUtil.e(mTag, "fileProviderShare e:$e")
+        }
+        LogUtil.e(mTag, "fileProviderShare:$contentUri")
+        return contentUri.toString()
     }
 }

@@ -5,6 +5,7 @@ import android.app.Application
 import android.content.Context
 import android.os.Bundle
 import com.bpzzr.audiolibrary.AudioLib
+import com.bpzzr.commonlibrary.Common
 import com.bpzzr.commonlibrary.util.LogUtil
 import com.bpzzr.managerlib.ManagerLib
 import com.bpzzr.managerlib.rong.BaseConversationActivity
@@ -20,6 +21,7 @@ class SkyChange : Application() {
         mContext = this
 
         AudioLib.init(this)
+        Common.init(this)
 
         //ManagerLib.init(this)
 
@@ -31,7 +33,7 @@ class SkyChange : Application() {
             }
 
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-
+                LogUtil.e("$activity onActivityCreated()")
             }
 
             override fun onActivityStarted(activity: Activity) {

@@ -19,8 +19,8 @@ import kotlinx.coroutines.launch
  */
 class NotificationUtil {
 
-
     companion object {
+        private val mTag = "NotificationUtil"
         /**
          * 创建通知通道
          * Create the NotificationChannel, but only on API 26+ because
@@ -109,7 +109,7 @@ class NotificationUtil {
                 val job = GlobalScope.launch {
                     repeat(1000) { i ->
                         //println("job: I'm sleeping $i ...")
-                        LogUtil.e(TAG, "job: I'm sleeping $current ...")
+                        LogUtil.e(mTag, "job: I'm sleeping $current ...")
                         delay(500L)
                         builder.setProgress(100, current++, false)
                         notify(101, builder.build())

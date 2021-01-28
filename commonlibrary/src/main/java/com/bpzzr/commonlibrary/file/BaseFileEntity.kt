@@ -27,4 +27,8 @@ data class BaseFileEntity(
     var size: Long? = 0,
     //文件是否选中的标识
     var isSelect: Boolean = false
-) : Parcelable
+) : Parcelable {
+    override fun toString(): String {
+        return nameSuffix!!
+    }
+}

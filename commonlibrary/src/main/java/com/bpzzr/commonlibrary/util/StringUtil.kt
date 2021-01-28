@@ -1,4 +1,7 @@
 package com.bpzzr.commonlibrary.util
 
-class StringUtil {
+class StringUtil private constructor() {
+    companion object {
+
+    }
 }

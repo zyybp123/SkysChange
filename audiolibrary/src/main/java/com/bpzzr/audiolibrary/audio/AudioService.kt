@@ -2,36 +2,37 @@ package com.bpzzr.audiolibrary.audio
 
 import android.app.Activity
 import android.app.Notification
-import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
-import android.os.Binder
-import android.os.Bundle
+import android.media.MediaPlayer
 import android.os.IBinder
-import android.support.v4.media.MediaBrowserCompat
-import android.support.v4.media.session.MediaSessionCompat
-import android.support.v4.media.session.PlaybackStateCompat
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
-import androidx.media.MediaBrowserServiceCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.MutableLiveData
 import com.bpzzr.audiolibrary.AudioFields
 import com.bpzzr.audiolibrary.R
 import com.bpzzr.commonlibrary.util.LogUtil
 
-class AudioService : Service() {
+class AudioService : Service(), AudioPlayer.Companion.AudioListener, LifecycleOwner {
     private val mTag = "AudioService"
-
-    // 创建绑定
-    private val binder = AudioBinder()
 
     private var remoteViews: RemoteViews? = null
     private var audioControlNotification: Notification? = null
 
+    private var playerStateObserver: MutableLiveData<AudioControlEntity> = MutableLiveData()
 
-    val audioPlayer: AudioPlayer = AudioPlayer.instance
+
+    private val audioPlayer: AudioPlayer = AudioPlayer.instance
+
+    private val mLifecycleRegistry: LifecycleRegistry = LifecycleRegistry(this)
     var audioPlaying: Boolean = false
 
     companion object {
+        val playerCommandReceiver: MutableLiveData<AudioControlEntity> = MutableLiveData()
+
         /**
          * 静态启动服务
          */
@@ -48,6 +49,7 @@ class AudioService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
         LogUtil.e(mTag, "onCreate()")
         remoteViews = RemoteViews(
             this.packageName,
@@ -61,86 +63,84 @@ class AudioService : Service() {
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setCustomBigContentView(remoteViews)
             .build()
-        remoteViews?.setTextViewText(R.id.audio_tv_title, getString(R.string.audio_name_default))
-        // 启动前台服务所需要的通知
+
         startForeground(AudioFields.AUDIO_CONTROL_ID, audioControlNotification)
-        audioPlayer.setListener(object : AudioPlayer.Companion.AudioListener {
-            override fun onStart() {
+        audioPlayer.setListener(this)
+        playerCommandReceiver.observe(
+            this, { audioControlEntity ->
+                when {
+                    ControlCommand.PLAY == audioControlEntity?.cammand -> {
+                        //开始播放
+                        audioPlayer.startPlay(
+                            this@AudioService,
+                            "https://img.tukuppt.com/newpreview_music/09/00/94/5c89ac4ce85cb74039.mp3"
+                        )
+                    }
+                    ControlCommand.PAUSE == audioControlEntity?.cammand -> {
+                        //暂停
+                        audioPlayer.pause()
+                    }
+                    ControlCommand.NEXT == audioControlEntity?.cammand -> {
+                        //下一首
+                        audioPlayer.startPlay(this@AudioService, "")
+                    }
+                    ControlCommand.PREVIOUS == audioControlEntity?.cammand -> {
+                        //上一首
+                        audioPlayer.startPlay(this@AudioService, "")
+                    }
 
-            }
-
-            override fun onPrepared(duration: Int?) {
-                audioPlaying = true
-                remoteViews?.setImageViewResource(
-                    R.id.audio_iv_play,
-                    android.R.drawable.ic_media_pause
-                )
-            }
-
-            override fun onError() {
-
-            }
-
-            override fun onProgress(position: Int) {
-
-            }
-        })
-
-        //初始化历史数据
-
-        //设置封面点击跳转到音频详情页面
-        remoteViews?.setOnClickPendingIntent(
-            R.id.audio_iv_cover,
-            PendingIntent.getActivity(this, 12, Intent(), PendingIntent.FLAG_UPDATE_CURRENT)
-        )
-        //设置播放按钮点击
-        /*remoteViews?.setOnClickResponse(
-            R.id.audio_iv_play,
-            object : RemoteViews.RemoteResponse() {
-                override fun addSharedElement(
-                    viewId: Int,
-                    sharedElementName: String
-                ): RemoteViews.RemoteResponse {
-                    LogUtil.e(mTag, "click response")
-
-                    return super.addSharedElement(viewId, sharedElementName)
                 }
-            }
-        )*/
-        //设置上一首
-        //设置下一首
+            })
     }
+
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         LogUtil.e(mTag, "onStartCommand()")
+
         return super.onStartCommand(intent, flags, startId)
     }
 
     override fun onDestroy() {
         LogUtil.e(mTag, "onDestroy()")
+        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
         super.onDestroy()
     }
 
     override fun onBind(intent: Intent?): IBinder? {
-        return binder
+        return null
     }
 
-    override fun onUnbind(intent: Intent): Boolean {
-        // All clients have unbound with unbindService()
-        return true
+
+    override fun onStart() {
+        //界面要显示加载中
+        playerStateObserver.postValue(AudioControlEntity(ControlCommand.START))
     }
 
-    override fun onRebind(intent: Intent) {
-        // A client is binding to the service with bindService(),
-        // after onUnbind() has already been called
+    override fun onPrepared(duration: Int?) {
+        //界面显示总时长
+        playerStateObserver.postValue(AudioControlEntity(ControlCommand.PREPARED, duration))
     }
 
-    /**
-     * 服务与界面绑定
-     */
-    inner class AudioBinder : Binder() {
-        // Return this instance of LocalService so clients can call public methods
-        fun getService(): AudioService = this@AudioService
+    override fun onError(mediaPlayer: MediaPlayer?, what: Int, extra: Int) {
+        //界面反馈错误信息
+        playerStateObserver.postValue(
+            AudioControlEntity(
+                cammand = ControlCommand.ERROR, errorWhat = "what:$what,extra:$extra"
+            )
+        )
+    }
+
+    override fun onProgress(position: Int) {
+        //界面反馈进度信息
+        playerStateObserver.postValue(
+            AudioControlEntity(
+                cammand = ControlCommand.PROGRESS, progress = position
+            )
+        )
+    }
+
+    override fun getLifecycle(): Lifecycle {
+        return mLifecycleRegistry
     }
 
 

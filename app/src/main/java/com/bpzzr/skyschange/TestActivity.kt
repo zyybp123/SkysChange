@@ -2,30 +2,40 @@ package com.bpzzr.skyschange
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
+import android.media.MediaPlayer
+import android.os.Build
 import android.os.Bundle
-import android.view.View
 import android.widget.LinearLayout
 import android.widget.RemoteViews
 import android.widget.SeekBar
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bpzzr.audiolibrary.AudioFields
 import com.bpzzr.audiolibrary.audio.AudioPlayer
 import com.bpzzr.audiolibrary.audio.PlayerViewHolder
 import com.bpzzr.commonlibrary.CommonDialog
 import com.bpzzr.commonlibrary.DynamicPermission
+import com.bpzzr.commonlibrary.file.BaseFileEntity
+import com.bpzzr.commonlibrary.file.FileScanner
+import com.bpzzr.commonlibrary.file.FileType
+import com.bpzzr.commonlibrary.file.ScanType
+import com.bpzzr.commonlibrary.util.DimensionUtil
 import com.bpzzr.commonlibrary.util.LogUtil
 import com.bpzzr.commonlibrary.widget.StateLayout
-import com.bpzzr.serverlibrary.ServerCore
 import com.bpzzr.skyschange.databinding.ActivityTestBinding
-import io.rong.imkit.RongIM
-import io.rong.imlib.model.Conversation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.java_websocket.WebSocket
+import java.io.File
+import java.util.*
+
 
 class TestActivity : AppCompatActivity(), DynamicPermission.OnPermissionListener {
 
@@ -40,28 +50,123 @@ class TestActivity : AppCompatActivity(), DynamicPermission.OnPermissionListener
     private lateinit var binding: ActivityTestBinding
     private lateinit var socket: WebSocket
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //setContentView(R.layout.activity_test)
         binding = ActivityTestBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
 
-        binding.tvStart.setOnClickListener {
-            ServerCore().launchServer(object :ServerCore.Listener{
-                override fun onConnected(webSocket: WebSocket) {
-                    socket = webSocket
+
+        binding.stateLayout.config = StateLayout.Config(
+            context = this,
+        )
+        //s.showEmpty(stateString = "暂无相关数据，点击重试")
+        binding.stateLayout.showLoading()
+
+        val recyclerView = RecyclerView(this)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        val mDataList = ArrayList<BaseFileEntity>()
+        val simpleTextAdapter = SimpleTextAdapter(mDataList)
+        recyclerView.adapter = simpleTextAdapter
+        binding.stateLayout.addSuccessView(recyclerView)
+
+        val file = File(getExternalFilesDir(null), "test")
+        //
+        val pf = file.parentFile
+        LogUtil.e(TAG, "pf: $pf")
+        val ppf = pf?.parentFile
+        LogUtil.e(TAG, "ppf: $ppf")
+        val tf = File(pf, "com.tencent.moblieqq")
+
+
+        /*LogUtil.e(TAG, "p: ${Environment.getExternalStorageDirectory()}")
+        val file1 = File("/sdcard/Android/data/xysx.com.tzq", "Test")
+        if (!file1.exists()) {
+            LogUtil.e(TAG, "mk: ${file1.mkdirs()}")
+        }*/
+        //val str = file1.source().buffer().readUtf8()
+        //LogUtil.e(TAG, "test str: $str")
+
+//        val requestFileIntent = Intent(Intent.ACTION_PICK).apply {
+//            type = "*/*"
+//        }
+//
+//        val uriForFile = FileProvider.getUriForFile(
+//            this,
+//            "xysx.com.tzq",
+//            file1
+//        )
+//        LogUtil.e(TAG, "test str: $uriForFile")
+
+
+        //startActivityForResult(requestFileIntent, 0)
+        /*val launcher = registerForActivityResult(
+            ActivityResultContracts.OpenDocument()
+        ) { uri ->
+            run {
+                LogUtil.e(TAG, "$uri")
+            }
+        }*/
+
+        //launcher.launch(requestFileIntent)
+        //startActivityForResult(requestFileIntent, 0)
+
+        //externalMediaDirs
+        //LogUtil.e(TAG, "media: ${Arrays.toString(externalMediaDirs)}")
+        LogUtil.e(TAG, "media: ${getDir(packageName, MODE_PRIVATE)}}")
+        //LogUtil.e(TAG, Arrays.toString(getExternalFilesDirs("com.tencent.edu")))
+        /*LogUtil.e(TAG, Arrays.toString(getExternalFilesDirs(null)))
+       LogUtil.e(TAG, Environment.getExternalStorageDirectory().absolutePath)
+       LogUtil.e(
+           TAG, Environment.getExternalStoragePublicDirectory(
+               "/Android/data/com.tencent.edu"
+           ).absolutePath
+       )*/
+
+        FileScanner().startScanFile(this,
+            ScanType.SCAN_ALL, FileType.ALL_LIST, object : FileScanner.ResultListener {
+                override fun onResult(files: ArrayList<BaseFileEntity>) {
+                    LogUtil.e(files.toString())
+                    mDataList.clear()
+                    mDataList.addAll(files)
+                    simpleTextAdapter.notifyDataSetChanged()
+                    binding.stateLayout.showSuccess()
+                }
+
+                override fun onError(e: Exception) {
+                    LogUtil.e("error：$e")
+                    binding.stateLayout.showFail()
                 }
             })
+
+        /*FileScanner().insertMediaFile(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            this,null,"123",
+            "123","123","Tencent","Tencent"
+        )*/
+
+        binding.tvStart.setOnClickListener {
+            /* ServerCore().launchServer(object :ServerCore.Listener{
+                 override fun onConnected(webSocket: WebSocket) {
+                     socket = webSocket
+                 }
+             })*/
             //ServerManager().Start(8080)
         }
-
-        binding.stateLayout.visibility = View.INVISIBLE
-
+        val d = CommonDialog(activity = this)
+        //binding.stateLayout.visibility = View.INVISIBLE
+        val px = DimensionUtil.getPxSize(this, R.dimen.dp_100)
         binding.tvTest.setOnClickListener {
-            //WebTool.instance?.webSocketRequest("ws://192.168.1.33:8080")
-            socket.send("space_command")
+
         }
+
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        LogUtil.e(TAG, "data:  $data")
     }
 
     fun CommonDialog.extend() {
@@ -126,7 +231,7 @@ class TestActivity : AppCompatActivity(), DynamicPermission.OnPermissionListener
 
         playerViewHolder = PlayerViewHolder(this)
         playerViewHolder.mIvPlay.setOnClickListener {
-            AudioPlayer.instance.startPlay(this)
+            //AudioPlayer.instance.startPlay(this)
         }
         playerViewHolder.mSeekBar.setOnSeekBarChangeListener(
             object : SeekBar.OnSeekBarChangeListener {
@@ -157,7 +262,7 @@ class TestActivity : AppCompatActivity(), DynamicPermission.OnPermissionListener
                 }
             }
 
-            override fun onError() {
+            override fun onError(mediaPlayer: MediaPlayer?, what: Int, extra: Int) {
                 LogUtil.e(TAG, "onError")
             }
 

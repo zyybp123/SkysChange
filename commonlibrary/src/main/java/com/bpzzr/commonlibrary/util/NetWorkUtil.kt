@@ -9,7 +9,6 @@ import android.provider.Settings
 
 public class NetWorkUtil {
 
-
     companion object {
         private const val mTag = "NetWorkUtil"
 

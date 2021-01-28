@@ -4,4 +4,5 @@
     <color name="cb_color_999">#999999</color>
     <color name="cb_color_dialog_sure">#0080fa</color>
     <color name="cb_color_dc">#DCDCDC</color>
+    <color name="cb_color_black_50">#80000000</color>
 </resources>

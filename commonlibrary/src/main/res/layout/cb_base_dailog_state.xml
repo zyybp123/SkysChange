@@ -1,14 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/dp_100"
+    android:layout_height="@dimen/dp_100"
+    android:layout_gravity="center"
+    android:background="@drawable/common_lib_state_dialog_bg"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <ProgressBar
+        android:id="@+id/cb_pb_loading"
+        android:layout_width="@dimen/dp_30"
+        android:layout_height="@dimen/dp_30"
+        android:layout_marginStart="@dimen/dp_12"
+        android:layout_marginTop="@dimen/dp_12"
+        android:layout_marginEnd="@dimen/dp_12"
+        android:indeterminateBehavior="repeat"
+        android:indeterminateDrawable="@drawable/common_lib_loading_ani"
+        android:indeterminateOnly="true"
+        android:visibility="gone" />
 
     <ImageView
-        android:layout_width="@dimen/dp_60"
-        android:layout_height="@dimen/dp_60"
-        android:src="@color/cb_color_dc"
-        />
+        android:id="@+id/cb_iv_state"
+        android:layout_width="@dimen/dp_30"
+        android:layout_height="@dimen/dp_30"
+        android:layout_marginStart="@dimen/dp_12"
+        android:layout_marginTop="@dimen/dp_12"
+        android:layout_marginEnd="@dimen/dp_12"
+        android:src="@android:drawable/stat_notify_error"
+        android:visibility="visible" />
+
     <TextView
+        android:id="@+id/cb_tv_state"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-</FrameLayout>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_12"
+        android:layout_marginBottom="@dimen/dp_12"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/sp_14"
+        tools:text="状态描述" />
+</LinearLayout>

@@ -8,6 +8,7 @@ import com.bpzzr.audiolibrary.audio.AudioPlayer
 import com.bpzzr.commonlibrary.util.LogUtil
 import com.bpzzr.commonlibrary.util.NetWorkUtil
 import com.bpzzr.managerlib.ManagerLib
+import com.bpzzr.skyschange.home.HomeActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -41,7 +42,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun goNext() {
-        startActivity(Intent(this, TestActivity::class.java))
-        finish()
+        //startActivity(Intent(this, StoreActivity::class.java))
+        startActivity(Intent(this, HomeActivity::class.java))
+        //finish()
     }
 }
