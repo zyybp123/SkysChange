@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.bpzzr.videointegrate.AliyunRenderView
+        android:id="@+id/vc_ali_render_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <include
+        android:id="@+id/top_title_area"
+        layout="@layout/vc_top_title_area" />
+
+    <include
+        android:id="@+id/center_state_area"
+        layout="@layout/vc_center_tip_area" />
+
+    <include
+        android:id="@+id/bottom_seek_area"
+        layout="@layout/vc_bottom_seek_area" />
+</FrameLayout>

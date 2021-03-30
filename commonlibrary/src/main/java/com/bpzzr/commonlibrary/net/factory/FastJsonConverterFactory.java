@@ -28,12 +28,7 @@ public class FastJsonConverterFactory extends Converter.Factory {
     private FastJsonConverterFactory() {
     }
 
-    /**
-     * Create an default instance for conversion. Encoding to JSON and
-     * decoding from JSON (when no charset is specified by a header) will use UTF-8.
-     *
-     * @return The instance of FastJsonConverterFactory
-     */
+    @NonNull
     public static FastJsonConverterFactory create() {
         return new FastJsonConverterFactory();
     }

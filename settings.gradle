@@ -1,7 +1,14 @@
+include ':videointegrate'
 include ':webcontrol'
 include ':serverlibrary'
 include ':managerlib'
 include ':commonlibrary'
 include ':audiolibrary'
 include ':app'
+
+include ':AliVideo:AliyunVideoCommon'
+include ':AliVideo:AliyunPlayerBase'
+include ':AliVideo:AlivcPlayerTools'
+include ':AliVideo:AliyunListPlayer'
+include ':AliVideo:AliyunLiveShiftPlayer'
 rootProject.name = "SkysChange"

@@ -4,7 +4,10 @@ buildscript {
     repositories {
         google()
         jcenter()
-        maven {url  "https://dl.bintray.com/rongcloud/maven"}
+        maven { url "https://dl.bintray.com/rongcloud/maven" }
+        maven { url 'https://maven.aliyun.com/repository/releases' }
+        //投屏需要使用的maven仓库
+        maven { url 'http://4thline.org/m2' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.1.1'
@@ -14,12 +17,15 @@ buildscript {
         // in the individual module build.gradle files
     }
 }
-
+apply from: 'videointegrate/config.gradle'
 allprojects {
     repositories {
         google()
         jcenter()
-        maven {url  "https://dl.bintray.com/rongcloud/maven"}
+        maven { url "https://dl.bintray.com/rongcloud/maven" }
+        maven { url 'https://maven.aliyun.com/repository/releases' }
+        //投屏需要使用的maven仓库
+        maven { url 'http://4thline.org/m2' }
     }
 }
 

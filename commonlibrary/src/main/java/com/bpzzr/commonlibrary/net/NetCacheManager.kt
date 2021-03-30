@@ -75,10 +75,6 @@ class NetCacheManager private constructor() {
             //url或数据为空串，则不缓存
             return
         }
-        if (data == getInMem(url)) {
-            //重复数据，不缓存
-            return
-        }
         mLruCache.put(MD5Util.md5(url), data)
     }
 

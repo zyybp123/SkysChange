@@ -5,8 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.widget.TextView;
 
+import com.bpzzr.commonlibrary.widget.FloatWidget;
 import com.bpzzr.skyschange.R;
 import com.bpzzr.skyschange.databinding.ActivityHomeBinding;
 
@@ -30,7 +33,6 @@ public class HomeActivity extends AppCompatActivity {
             fragmentList.add(MoreFragment.newInstance());
             fragmentList.add(CommonFragment.newInstance());
         }
-
 
         homeBinding.rcViewPager.setAdapter(
                 new FragmentStateAdapter(this) {
