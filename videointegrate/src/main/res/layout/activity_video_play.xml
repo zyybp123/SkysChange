@@ -7,6 +7,7 @@
     tools:context=".VideoPlayActivity">
 
     <com.bpzzr.videointegrate.CustomVodPlayerView
+        android:id="@+id/cvv"
         android:layout_width="match_parent"
         android:layout_height="200dp" />
    <!-- <com.bpzzr.videointegrate.AliyunRenderView
